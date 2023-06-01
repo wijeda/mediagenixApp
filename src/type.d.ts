@@ -6,10 +6,16 @@ export interface SchemaField {
   options?: Array<{ label: string; value: string }>;
 }
 
-export interface TableData {
+interface TableData {
   id: string;
-  [key: string]: string | undefined;
+  date?: {
+    startDate?: any;
+    endDate?: any;
+  } | string;
+  [key: string]: any;
 }
+
+
 
 export interface FieldOption {
   label: string;
