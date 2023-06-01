@@ -3,7 +3,7 @@ import viteLogo from "../public/vite.svg";
 import "./App.css";
 import DynamicTable from "./components/DynamicTable/DynamicTable";
 import { server } from "./server/mockServer";
-import { SchemaField, TableData } from "./type";
+import { SchemaField } from "./type";
 
 const schema: SchemaField[] = [
   {
@@ -36,8 +36,6 @@ const schema: SchemaField[] = [
 function App() {
   server.start();
 
-  const data: TableData[] = []; // Initialize your data here
-
   return (
     <>
       <div>
@@ -48,7 +46,7 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <DynamicTable data={data} schema={schema} />
+      <DynamicTable schema={schema} />
     </>
   );
 }
