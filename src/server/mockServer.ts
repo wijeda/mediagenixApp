@@ -1,5 +1,7 @@
 import { rest, setupWorker } from "msw";
 import { SchemaField, TableData } from "../type";
+import { v4 as uuidv4 } from "uuid";
+
 
 let data: TableData[] = [
   {
@@ -67,7 +69,7 @@ server.use(
   // Create data
   rest.post<TableData>("/api/data", (req, res, ctx) => {
     const newData: TableData = req.body;
-    const newEntry = { ...newData, id: String(data.length + 1) };
+    const newEntry = { ...newData, id: uuidv4() };
     return res(ctx.status(201), ctx.json(newEntry));
   }),
 

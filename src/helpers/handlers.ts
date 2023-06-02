@@ -15,14 +15,10 @@ export const handleCreate = (
       const { startDate, endDate, ...restFormValues } = values;
 
       const newEntry: TableData = {
-        id: Math.random().toString(),
         startDate: startDate ? startDate.format("YYYY-MM-DD") : undefined,
         endDate: endDate ? endDate.format("YYYY-MM-DD") : undefined,
         ...restFormValues,
       };
-
-      console.log("startDate");
-      console.log(startDate);
 
       createEntry(newEntry).then((response: TableData) => {
         setTableData([...tableData, response]);

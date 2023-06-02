@@ -1,5 +1,6 @@
 // api/data.ts
 
+
 import { TableData } from "../type";
 
 // Fetch data from the server

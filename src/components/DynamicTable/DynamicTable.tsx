@@ -30,6 +30,9 @@ const DynamicTable: React.FC<Props> = ({ schema }) => {
     setIsModalOpen(true);
   };
 
+  console.log("getRows(tableData)");
+  console.log(getRows(tableData));
+
   const columns = getColumns(schema);
   const rows = getRows(tableData);
 
