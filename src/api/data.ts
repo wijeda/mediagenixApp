@@ -33,3 +33,17 @@ export const createEntry = (entry: TableData): Promise<TableData> => {
       throw error;
     });
 };
+
+// Delete an entry from the server
+export const deleteEntry = (id: string): Promise<void> => {
+  return fetch(`/api/data/${id}`, {
+    method: "DELETE",
+  })
+    .then(() => {
+      console.log("Entry deleted successfully");
+    })
+    .catch((error) => {
+      console.error("Error deleting entry:", error);
+      throw error;
+    });
+};

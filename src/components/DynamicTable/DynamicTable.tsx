@@ -4,7 +4,11 @@ import { getColumns, getRows } from "./tableUtils";
 import EntryForm from "../Form/EntryForm";
 import { fetchData } from "../../api/data";
 import { SchemaField, TableData } from "../../type";
-import { handleCreate, handleCancel } from "../../helpers/handlers";
+import {
+  handleCreate,
+  handleCancel,
+  handleDelete,
+} from "../../helpers/handlers";
 
 interface Props {
   schema: SchemaField[];
@@ -29,13 +33,29 @@ const DynamicTable: React.FC<Props> = ({ schema }) => {
   const columns = getColumns(schema);
   const rows = getRows(tableData);
 
+  const handleDeleteRow = (id: string) => {
+    handleDelete(id, tableData, setTableData);
+  };
+
   return (
     <>
+      <Table
+        dataSource={rows}
+        columns={[
+          ...columns,
+          {
+            title: "Actions",
+            key: "actions",
+            render: (_: any, record: TableData) => (
+              <Button onClick={() => handleDeleteRow(record.id)}>Delete</Button>
+            ),
+          },
+        ]}
+      />
+
       <Button type="primary" onClick={showModal}>
         Add Entry
       </Button>
-
-      <Table dataSource={rows} columns={columns} />
 
       <Modal
         title="Create Entry"

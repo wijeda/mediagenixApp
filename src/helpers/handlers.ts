@@ -1,5 +1,5 @@
 import { TableData } from "../type";
-import { createEntry } from "../api/data";
+import { createEntry, deleteEntry } from "../api/data";
 
 export const handleCreate = (
   form: any,
@@ -32,6 +32,21 @@ export const handleCreate = (
     })
     .catch((error: Error) => {
       console.error("Validation error:", error);
+    });
+};
+
+export const handleDelete = (
+  id: string,
+  tableData: TableData[],
+  setTableData: (data: TableData[]) => void
+) => {
+  deleteEntry(id)
+    .then(() => {
+      const updatedTableData = tableData.filter((entry) => entry.id !== id);
+      setTableData(updatedTableData);
+    })
+    .catch((error: Error) => {
+      console.error("Error deleting entry:", error);
     });
 };
 
