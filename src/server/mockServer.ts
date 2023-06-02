@@ -2,7 +2,6 @@ import { rest, setupWorker } from "msw";
 import { SchemaField, TableData } from "../type";
 import { v4 as uuidv4 } from "uuid";
 
-
 let data: TableData[] = [
   {
     id: "1",
@@ -70,19 +69,17 @@ server.use(
   rest.post<TableData>("/api/data", (req, res, ctx) => {
     const newData: TableData = req.body;
     const newEntry = { ...newData, id: uuidv4() };
+    data.push(newEntry);
     return res(ctx.status(201), ctx.json(newEntry));
   }),
 
   // Update data
   rest.put<TableData>("/api/data/:id", (req, res, ctx) => {
-    console.log('PUUUUUT')
-    console.log(req)
     const { id } = req.params;
     const newData: TableData = req.body;
     const index = data.findIndex((entry) => entry.id === id);
     if (index !== -1) {
-      const updatedData = Array.isArray(newData.id) ? { ...newData, id: newData.id[0] } : { ...newData };
-      data[index] = updatedData;
+      data[index] = { ...newData, id };
       return res(ctx.status(200), ctx.json(data[index]));
     } else {
       return res(ctx.status(404));

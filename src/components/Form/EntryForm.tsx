@@ -5,18 +5,31 @@ import { SchemaField } from "../../type";
 interface Props {
   form: any;
   schema: SchemaField[];
+  editEntryId: string | null;
 }
 
-const EntryForm: React.FC<Props> = ({ form, schema }) => {
+const EntryForm: React.FC<Props> = ({ form, schema, editEntryId }) => {
+  const getFieldInitialValue = (fieldName: string) => {
+    if (editEntryId) {
+      const editEntry = form.getFieldValue("editEntry");
+      if (editEntry) {
+        return editEntry[fieldName];
+      }
+    }
+    return undefined;
+  };
+
   return (
     <Form form={form} layout="vertical">
       {schema.map((field) => {
         if (field.component === "range_picker") {
+          const initialValue = getFieldInitialValue(field.name[0]);
           return (
-            <React.Fragment key={field.name}>
+            <React.Fragment key={field.name[0]}>
               <Form.Item
                 label={`${field.label} (Start Date)`}
                 name={`${field.name[0]}`}
+                initialValue={initialValue && moment(initialValue)}
                 rules={[
                   {
                     required: field.required,
@@ -29,6 +42,10 @@ const EntryForm: React.FC<Props> = ({ form, schema }) => {
               <Form.Item
                 label={`${field.label} (End Date)`}
                 name={`${field.name[1]}`}
+                initialValue={
+                  getFieldInitialValue(field.name[1]) &&
+                  moment(getFieldInitialValue(field.name[1]))
+                }
                 rules={[
                   {
                     required: field.required,
@@ -42,11 +59,13 @@ const EntryForm: React.FC<Props> = ({ form, schema }) => {
           );
         }
 
+        const initialValue = getFieldInitialValue(field.name);
         return (
           <Form.Item
             key={field.name}
             label={field.label}
             name={field.name}
+            initialValue={initialValue}
             rules={[
               {
                 required: field.required,

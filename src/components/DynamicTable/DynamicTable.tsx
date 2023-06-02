@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Modal, Form } from "antd";
 import { getColumns, getRows } from "./tableUtils";
 import EntryForm from "../Form/EntryForm";
-import { fetchData } from "../../api/data";
-import { SchemaField, TableData } from "../../type";
 import {
-  handleCreate,
-  handleCancel,
-  handleDelete,
-} from "../../helpers/handlers";
+  fetchData,
+  createEntry,
+  deleteEntry,
+  updateEntry,
+} from "../../api/data";
+import { SchemaField, TableData } from "../../type";
 
 interface Props {
   schema: SchemaField[];
@@ -16,29 +16,97 @@ interface Props {
 
 const DynamicTable: React.FC<Props> = ({ schema }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editEntryId, setEditEntryId] = useState<string | null>(null);
   const [form] = Form.useForm();
   const [tableData, setTableData] = useState<TableData[]>([]);
 
   useEffect(() => {
-    // Fetch data from the server
     fetchData().then((data: TableData[]) => {
       setTableData(data);
     });
   }, []);
 
-  const showModal = () => {
+  const showModal = (entryId: string | null) => {
+    setEditEntryId(entryId);
     setIsModalOpen(true);
   };
 
-  console.log("getRows(tableData)");
-  console.log(getRows(tableData));
+  const handleEditRow = (entryId: string) => {
+    showModal(entryId);
+  };
+
+  const handleDeleteRow = (entryId: string) => {
+    deleteEntry(entryId)
+      .then(() => {
+        const updatedTableData = tableData.filter(
+          (entry) => entry.id !== entryId
+        );
+        setTableData(updatedTableData);
+      })
+      .catch((error: Error) => {
+        console.error("Error deleting entry:", error);
+      });
+  };
+
+  const handleUpdateRow = () => {
+    form.validateFields().then((values: any) => {
+      console.log("Updating entry:", values);
+
+      const { startDate, endDate, ...restFormValues } = values;
+
+      const updatedEntry: TableData = {
+        id: editEntryId!,
+        startDate: startDate ? startDate.format("YYYY-MM-DD") : undefined,
+        endDate: endDate ? endDate.format("YYYY-MM-DD") : undefined,
+        ...restFormValues,
+      };
+
+      updateEntry(updatedEntry)
+        .then((response: TableData) => {
+          const updatedTableData = tableData.map((entry) =>
+            entry.id === response.id ? response : entry
+          );
+          setTableData(updatedTableData);
+          setIsModalOpen(false);
+          form.resetFields();
+        })
+        .catch((error: Error) => {
+          console.error("Error updating entry:", error);
+        });
+    });
+  };
+
+  const handleCreate = () => {
+    form
+      .validateFields()
+      .then((values: any) => {
+        console.log("Creating entry:", values);
+
+        const { startDate, endDate, ...restFormValues } = values;
+
+        const newEntry: TableData = {
+          startDate: startDate ? startDate.format("YYYY-MM-DD") : undefined,
+          endDate: endDate ? endDate.format("YYYY-MM-DD") : undefined,
+          ...restFormValues,
+        };
+
+        createEntry(newEntry)
+          .then((response: TableData) => {
+            setTableData([...tableData, response]);
+            setIsModalOpen(false);
+            form.resetFields();
+          })
+          .catch((error: Error) => {
+            console.error("Error creating entry:", error);
+          });
+      })
+      .catch((error: Error) => {
+        console.error("Validation error:", error);
+      });
+  };
 
   const columns = getColumns(schema);
   const rows = getRows(tableData);
-
-  const handleDeleteRow = (id: string) => {
-    handleDelete(id, tableData, setTableData);
-  };
 
   return (
     <>
@@ -50,37 +118,40 @@ const DynamicTable: React.FC<Props> = ({ schema }) => {
             title: "Actions",
             key: "actions",
             render: (_: any, record: TableData) => (
-              <Button onClick={() => handleDeleteRow(record.id)}>Delete</Button>
+              <>
+                <Button onClick={() => handleEditRow(record.id)}>Edit</Button>
+                <Button onClick={() => handleDeleteRow(record.id)}>
+                  Delete
+                </Button>
+              </>
             ),
           },
         ]}
       />
 
-      <Button type="primary" onClick={showModal}>
+      <Button type="primary" onClick={() => showModal(null)}>
         Add Entry
       </Button>
 
       <Modal
-        title="Create Entry"
-        open={isModalOpen}
-        onCancel={() => handleCancel(setIsModalOpen)}
+        title={editEntryId ? "Edit Entry" : "Create Entry"}
+        visible={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
         destroyOnClose={true}
         footer={[
-          <Button key="cancel" onClick={() => handleCancel(setIsModalOpen)}>
+          <Button key="cancel" onClick={() => setIsModalOpen(false)}>
             Cancel
           </Button>,
           <Button
-            key="create"
+            key="save"
             type="primary"
-            onClick={() =>
-              handleCreate(form, tableData, setTableData, setIsModalOpen)
-            }
+            onClick={editEntryId ? handleUpdateRow : handleCreate}
           >
-            Create
+            {editEntryId ? "Update" : "Create"}
           </Button>,
         ]}
       >
-        <EntryForm form={form} schema={schema} />
+        <EntryForm form={form} schema={schema} editEntryId={editEntryId} />
       </Modal>
     </>
   );

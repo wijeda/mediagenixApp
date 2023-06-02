@@ -48,3 +48,21 @@ export const deleteEntry = (id: string): Promise<void> => {
       throw error;
     });
 };
+
+export const updateEntry = (entry: TableData): Promise<TableData> => {
+  return fetch(`/api/data/${entry.id}`, {
+    method: "PUT",
+    body: JSON.stringify(entry),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.error("Error updating entry:", error);
+      throw error;
+    });
+};
