@@ -16,7 +16,7 @@ interface Props {
 
 const DynamicTable: React.FC<Props> = ({ schema }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editEntryId, setEditEntryId] = useState<string | null>(null);
+  const [editEntry, setEditEntry] = useState<TableData | null>(null); // New state variable to store the editEntry
   const [form] = Form.useForm();
   const [tableData, setTableData] = useState<TableData[]>([]);
 
@@ -27,7 +27,7 @@ const DynamicTable: React.FC<Props> = ({ schema }) => {
   }, []);
 
   const showModal = (entryId: string | null) => {
-    setEditEntryId(entryId);
+    setEditEntry(tableData.find((entry) => entry.id === entryId) || null); // Set the editEntry based on the entryId
     setIsModalOpen(true);
   };
 
@@ -55,7 +55,7 @@ const DynamicTable: React.FC<Props> = ({ schema }) => {
       const { startDate, endDate, ...restFormValues } = values;
 
       const updatedEntry: TableData = {
-        id: editEntryId!,
+        id: editEntry?.id!,
         startDate: startDate ? startDate.format("YYYY-MM-DD") : undefined,
         endDate: endDate ? endDate.format("YYYY-MM-DD") : undefined,
         ...restFormValues,
@@ -134,9 +134,11 @@ const DynamicTable: React.FC<Props> = ({ schema }) => {
       </Button>
 
       <Modal
-        title={editEntryId ? "Edit Entry" : "Create Entry"}
+        title={editEntry ? "Edit Entry" : "Create Entry"}
         visible={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
+        onCancel={() => {
+          setIsModalOpen(false);
+        }}
         destroyOnClose={true}
         footer={[
           <Button key="cancel" onClick={() => setIsModalOpen(false)}>
@@ -145,13 +147,13 @@ const DynamicTable: React.FC<Props> = ({ schema }) => {
           <Button
             key="save"
             type="primary"
-            onClick={editEntryId ? handleUpdateRow : handleCreate}
+            onClick={editEntry ? handleUpdateRow : handleCreate}
           >
-            {editEntryId ? "Update" : "Create"}
+            {editEntry ? "Update" : "Create"}
           </Button>,
         ]}
       >
-        <EntryForm form={form} schema={schema} editEntryId={editEntryId} />
+        <EntryForm form={form} schema={schema} editEntry={editEntry} />
       </Modal>
     </>
   );

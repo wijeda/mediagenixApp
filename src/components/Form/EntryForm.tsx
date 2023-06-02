@@ -1,21 +1,20 @@
 import React from "react";
 import { Form, Input, Select, DatePicker } from "antd";
-import { SchemaField } from "../../type";
+import { SchemaField, TableData } from "../../type";
+import moment from "moment";
 
 interface Props {
   form: any;
   schema: SchemaField[];
-  editEntryId: string | null;
+  editEntry: TableData | null;
 }
 
-const EntryForm: React.FC<Props> = ({ form, schema, editEntryId }) => {
+const EntryForm: React.FC<Props> = ({ form, schema, editEntry }) => {
   const getFieldInitialValue = (fieldName: string) => {
-    if (editEntryId) {
-      const editEntry = form.getFieldValue("editEntry");
-      if (editEntry) {
-        return editEntry[fieldName];
-      }
+    if (editEntry) {
+      return editEntry[fieldName];
     }
+
     return undefined;
   };
 
@@ -24,6 +23,7 @@ const EntryForm: React.FC<Props> = ({ form, schema, editEntryId }) => {
       {schema.map((field) => {
         if (field.component === "range_picker") {
           const initialValue = getFieldInitialValue(field.name[0]);
+          console.log(initialValue);
           return (
             <React.Fragment key={field.name[0]}>
               <Form.Item
@@ -60,6 +60,9 @@ const EntryForm: React.FC<Props> = ({ form, schema, editEntryId }) => {
         }
 
         const initialValue = getFieldInitialValue(field.name);
+
+        console.log(form.getFieldsValue());
+        console.log(form.getFieldsValue());
         return (
           <Form.Item
             key={field.name}
