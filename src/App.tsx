@@ -82,7 +82,6 @@ function App() {
       {isModalOpen && (
         <EntryFormModal
           schema={schema}
-          isModalOpen={isModalOpen}
           handleModalCancel={() => setIsModalOpen(false)}
           handleEditRequest={handleEditRequest}
           handleCreateRequest={handleCreateRequest}

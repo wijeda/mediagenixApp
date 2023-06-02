@@ -5,7 +5,6 @@ import EntryForm from "../Form/EntryForm";
 interface Props {
   schema: SchemaField[];
   editEntry: TableData | null | undefined;
-  isModalOpen?: boolean;
   handleModalCancel: () => void;
   handleEditRequest: (formData: TableData) => void;
   handleCreateRequest: (formData: TableData) => void;
@@ -14,7 +13,6 @@ interface Props {
 const EntryFormModal: React.FC<Props> = ({
   schema,
   editEntry,
-  isModalOpen,
   handleModalCancel,
   handleEditRequest,
   handleCreateRequest,
@@ -23,7 +21,7 @@ const EntryFormModal: React.FC<Props> = ({
   return (
     <Modal
       title={editEntry ? "Edit Entry" : "Create Entry"}
-      open={isModalOpen}
+      open={true}
       onCancel={handleModalCancel}
       footer={null}
       destroyOnClose={true}
