@@ -1,33 +1,47 @@
 import { TableData } from "../type";
-import { createEntry, deleteEntry } from "../api/data";
+import { createEntry, deleteEntry, updateEntry } from "../api/data";
 
 export const handleCreate = (
-  form: any,
+  formData: TableData,
   tableData: TableData[],
   setTableData: (data: TableData[]) => void,
-  setIsModalOpen: (isOpen: boolean) => void
 ) => {
-  form
-    .validateFields()
-    .then((values: any) => {
-      console.log("Creating entry:", values);
 
-      const { startDate, endDate, ...restFormValues } = values;
+  const { startDate, endDate, ...restFormValues } = formData;
 
-      const newEntry: TableData = {
-        startDate: startDate ? startDate.format("YYYY-MM-DD") : undefined,
-        endDate: endDate ? endDate.format("YYYY-MM-DD") : undefined,
-        ...restFormValues,
-      };
+  const newEntry: TableData = {
+    startDate: startDate ? startDate.format("YYYY-MM-DD") : undefined,
+    endDate: endDate ? endDate.format("YYYY-MM-DD") : undefined,
+    ...restFormValues,
+  };
 
-      createEntry(newEntry).then((response: TableData) => {
-        setTableData([...tableData, response]);
-        setIsModalOpen(false);
-        form.resetFields();
-      });
+  createEntry(newEntry).then((response: TableData) => {
+    setTableData([...tableData, response]);
+  });
+};
+
+export const handleUpdate = (
+  formData: TableData,
+  tableData: TableData[],
+  setTableData: (data: TableData[]) => void,
+) => {
+  const { startDate, endDate, ...restFormValues } = formData;
+
+  const updatedEntry: TableData = {
+    startDate: startDate ? startDate.format("YYYY-MM-DD") : undefined,
+    endDate: endDate ? endDate.format("YYYY-MM-DD") : undefined,
+    ...restFormValues,
+  };
+
+  updateEntry(updatedEntry)
+    .then((response: TableData) => {
+      const updatedTableData = tableData.map((entry) =>
+        entry.id === response.id ? response : entry
+      );
+      setTableData(updatedTableData);
     })
     .catch((error: Error) => {
-      console.error("Validation error:", error);
+      console.error("Error updating entry:", error);
     });
 };
 
@@ -44,8 +58,4 @@ export const handleDelete = (
     .catch((error: Error) => {
       console.error("Error deleting entry:", error);
     });
-};
-
-export const handleCancel = (setIsModalOpen: (isOpen: boolean) => void) => {
-  setIsModalOpen(false);
 };

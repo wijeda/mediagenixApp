@@ -1,9 +1,10 @@
-import reactLogo from "./assets/react.svg";
-import viteLogo from "../public/vite.svg";
 import "./App.css";
 import DynamicTable from "./components/DynamicTable/DynamicTable";
-import { server } from "./server/mockServer";
-import { SchemaField } from "./type";
+import { SchemaField, TableData } from "./type";
+import { useEffect, useState } from "react";
+import EntryFormModal from "./components/DynamicTable/EntryFormModal";
+import { fetchData } from "./api/data";
+import { handleCreate, handleDelete, handleUpdate } from "./helpers/handlers";
 
 const schema: SchemaField[] = [
   {
@@ -34,19 +35,60 @@ const schema: SchemaField[] = [
 ];
 
 function App() {
-  server.start();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editEntry, setEditEntry] = useState<TableData | null | undefined>();
+  const [tableData, setTableData] = useState<TableData[]>([]);
+
+  useEffect(() => {
+    fetchData().then((data: TableData[]) => {
+      setTableData(data);
+    });
+  }, []);
+
+  const handleEditRow = (entryId: string) => {
+    const editEntry = tableData.find((entry) => entry.id === entryId);
+    setEditEntry(editEntry);
+    setIsModalOpen(true);
+  };
+
+  const handleEditRequest = (formData: TableData) => {
+    handleUpdate(formData, tableData, setTableData);
+    setIsModalOpen(false);
+  };
+
+  const handleDeleteRow = (entryId: string) => {
+    handleDelete(entryId, tableData, setTableData);
+  };
+
+  const handleCreateRow = () => {
+    setEditEntry(null);
+    setIsModalOpen(true);
+  };
+
+  const handleCreateRequest = (formData: TableData) => {
+    handleCreate(formData, tableData, setTableData);
+    setIsModalOpen(false);
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noopener noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noopener noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <DynamicTable schema={schema} />
+      <DynamicTable
+        schema={schema}
+        tableData={tableData}
+        onEntryUpdate={handleEditRow}
+        onEntryDelete={handleDeleteRow}
+        onEntryCreate={handleCreateRow}
+      />
+      {isModalOpen && (
+        <EntryFormModal
+          schema={schema}
+          isModalOpen={isModalOpen}
+          handleModalCancel={() => setIsModalOpen(false)}
+          handleEditRequest={handleEditRequest}
+          handleCreateRequest={handleCreateRequest}
+          editEntry={editEntry}
+        />
+      )}
     </>
   );
 }

@@ -1,15 +1,23 @@
 import React from "react";
-import { Form, Input, Select, DatePicker } from "antd";
+import { Form, Input, Select, DatePicker, Button } from "antd";
 import { SchemaField, TableData } from "../../type";
 import moment from "moment";
 
 interface Props {
   form: any;
   schema: SchemaField[];
-  editEntry: TableData | null;
+  editEntry: TableData | null | undefined;
+  onCancel: () => void;
+  onFinish: (formData: TableData) => void;
 }
 
-const EntryForm: React.FC<Props> = ({ form, schema, editEntry }) => {
+const EntryForm: React.FC<Props> = ({
+  form,
+  schema,
+  editEntry,
+  onCancel,
+  onFinish,
+}) => {
   const getFieldInitialValue = (fieldName: string) => {
     if (editEntry) {
       return editEntry[fieldName];
@@ -19,11 +27,10 @@ const EntryForm: React.FC<Props> = ({ form, schema, editEntry }) => {
   };
 
   return (
-    <Form form={form} layout="vertical">
+    <Form form={form} layout="vertical" onFinish={onFinish}>
       {schema.map((field) => {
         if (field.component === "range_picker") {
           const initialValue = getFieldInitialValue(field.name[0]);
-          console.log(initialValue);
           return (
             <React.Fragment key={field.name[0]}>
               <Form.Item
@@ -61,8 +68,6 @@ const EntryForm: React.FC<Props> = ({ form, schema, editEntry }) => {
 
         const initialValue = getFieldInitialValue(field.name);
 
-        console.log(form.getFieldsValue());
-        console.log(form.getFieldsValue());
         return (
           <Form.Item
             key={field.name}
@@ -88,6 +93,10 @@ const EntryForm: React.FC<Props> = ({ form, schema, editEntry }) => {
           </Form.Item>
         );
       })}
+      <Form.Item>
+        <Button onClick={onCancel}>cancel</Button>
+        <Button htmlType="submit">submit</Button>
+      </Form.Item>
     </Form>
   );
 };
