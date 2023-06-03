@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Table, Button, Input } from "antd";
 import { getColumns, getRows } from "./tableUtils";
 import { SchemaField, TableData } from "../../type";
+import { searchEntries } from "../../api/data";
 import "./DynamicTable.css"; // Import the CSS file for custom styles
 
 interface Props {
@@ -20,13 +21,17 @@ const DynamicTable: React.FC<Props> = ({
   onEntryCreate,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const searchResults = searchQuery
-    ? tableData.filter(
-        (row) =>
-          row.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          row.description?.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : tableData;
+  const [searchResults, setSearchResults] = useState<TableData[]>([]);
+
+  useEffect(() => {
+    if (searchQuery) {
+      searchEntries(searchQuery).then((data: TableData[]) => {
+        setSearchResults(data);
+      });
+    } else {
+      setSearchResults(tableData);
+    }
+  }, [searchQuery, tableData]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);

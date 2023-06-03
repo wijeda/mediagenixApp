@@ -108,7 +108,19 @@ server.use(
     const newSchema: SchemaField[] = req.body;
     schema = newSchema;
     return res(ctx.status(200), ctx.json(schema));
+  }),
+
+  // Search data
+  rest.get("/api/search", (req, res, ctx) => {
+    const query = req.url.searchParams.get("query");
+    const searchResults = data.filter(
+      (row) =>
+        row.title?.toLowerCase().includes(query?.toLowerCase()) ||
+        row.description?.toLowerCase().includes(query?.toLowerCase())
+    );
+    return res(ctx.status(200), ctx.json(searchResults));
   })
+
 );
 
 export { server };
