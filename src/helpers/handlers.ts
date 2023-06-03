@@ -21,6 +21,7 @@ export const handleCreate = (
 };
 
 export const handleUpdate = (
+  entryId: string,
   formData: TableData,
   tableData: TableData[],
   setTableData: (data: TableData[]) => void,
@@ -32,8 +33,10 @@ export const handleUpdate = (
     endDate: endDate ? endDate.format("YYYY-MM-DD") : undefined,
     ...restFormValues,
   };
+  console.log('entryId')
+  console.log(entryId)
 
-  updateEntry(updatedEntry)
+  updateEntry(entryId, updatedEntry)
     .then((response: TableData) => {
       const updatedTableData = tableData.map((entry) =>
         entry.id === response.id ? response : entry

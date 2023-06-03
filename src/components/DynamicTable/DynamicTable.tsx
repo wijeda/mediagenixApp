@@ -1,14 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Table, Button, Modal, Form } from "antd";
+import React, { useState } from "react";
+import { Table, Button, Input } from "antd";
 import { getColumns, getRows } from "./tableUtils";
-import EntryForm from "../Form/EntryForm";
-import { fetchData } from "../../api/data";
 import { SchemaField, TableData } from "../../type";
-import {
-  handleCreate,
-  handleUpdate,
-  handleDelete,
-} from "../../helpers/handlers";
+import "./DynamicTable.css"; // Import the CSS file for custom styles
 
 interface Props {
   schema: SchemaField[];
@@ -25,11 +19,32 @@ const DynamicTable: React.FC<Props> = ({
   onEntryDelete,
   onEntryCreate,
 }) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchResults = searchQuery
+    ? tableData.filter(
+        (row) =>
+          row.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          row.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : tableData;
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
   const columns = getColumns(schema);
-  const rows = getRows(tableData);
+  const rows = getRows(searchQuery ? searchResults : tableData);
 
   return (
-    <>
+    <div>
+      <div className="search-input-container">
+        <Input.Search
+          className="search-input"
+          placeholder="Search"
+          value={searchQuery}
+          onChange={handleSearch}
+        />
+      </div>
       <Table
         dataSource={rows}
         columns={[
@@ -46,11 +61,10 @@ const DynamicTable: React.FC<Props> = ({
           },
         ]}
       />
-
       <Button type="primary" onClick={() => onEntryCreate()}>
         Add Entry
       </Button>
-    </>
+    </div>
   );
 };
 

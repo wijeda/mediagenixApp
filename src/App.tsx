@@ -3,7 +3,7 @@ import DynamicTable from "./components/DynamicTable/DynamicTable";
 import { SchemaField, TableData } from "./type";
 import { useEffect, useState } from "react";
 import EntryFormModal from "./components/DynamicTable/EntryFormModal";
-import { fetchData } from "./api/data";
+import { fetchData, searchEntries } from "./api/data";
 import { handleCreate, handleDelete, handleUpdate } from "./helpers/handlers";
 
 const schema: SchemaField[] = [
@@ -38,12 +38,20 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editEntry, setEditEntry] = useState<TableData | null | undefined>();
   const [tableData, setTableData] = useState<TableData[]>([]);
+  const [searchResults, setSearchResults] = useState<TableData[]>([]);
 
   useEffect(() => {
-    fetchData().then((data: TableData[]) => {
-      setTableData(data);
-    });
-  }, []);
+    if (searchResults.length > 0) {
+      const searchQuery = searchResults.join(" ");
+      searchEntries(searchQuery).then((data: TableData[]) => {
+        setSearchResults(data);
+      });
+    } else {
+      fetchData().then((data: TableData[]) => {
+        setTableData(data);
+      });
+    }
+  }, [searchResults]);
 
   const handleEditRow = (entryId: string) => {
     const editEntry = tableData.find((entry) => entry.id === entryId);
@@ -52,8 +60,11 @@ function App() {
   };
 
   const handleEditRequest = (formData: TableData) => {
-    handleUpdate(formData, tableData, setTableData);
-    setIsModalOpen(false);
+    console.log(formData);
+    if (editEntry) {
+      handleUpdate(editEntry.id, formData, tableData, setTableData);
+      setIsModalOpen(false);
+    }
   };
 
   const handleDeleteRow = (entryId: string) => {

@@ -49,8 +49,8 @@ export const deleteEntry = (id: string): Promise<void> => {
     });
 };
 
-export const updateEntry = (entry: TableData): Promise<TableData> => {
-  return fetch(`/api/data/${entry.id}`, {
+export const updateEntry = (entryId: string, entry: TableData): Promise<TableData> => {
+  return fetch(`/api/data/${entryId}`, {
     method: "PUT",
     body: JSON.stringify(entry),
     headers: {
@@ -65,4 +65,10 @@ export const updateEntry = (entry: TableData): Promise<TableData> => {
       console.error("Error updating entry:", error);
       throw error;
     });
+};
+
+export const searchEntries = async (query: string): Promise<TableData[]> => {
+  const response = await fetch(`https://example.com/api/search?query=${query}`);
+  const data = await response.json();
+  return data;
 };
