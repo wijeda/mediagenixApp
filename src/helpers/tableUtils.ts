@@ -1,4 +1,4 @@
-import { SchemaField, TableData } from "../../type";
+import { SchemaField, TableData } from "../type";
 
 export const getColumns = (schema: SchemaField[]) => {
   return schema

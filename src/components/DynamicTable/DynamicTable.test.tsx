@@ -40,10 +40,8 @@ describe("App", () => {
   });
 
   it("should render the table with correct data on load", async () => {
-    // Wait for data to be fetched and rendered
     await screen.findByText("Start of the year");
 
-    // Assert that a table row contains the expected data
     const tableRows = screen.getAllByRole("row");
     const rowWithTestData = tableRows.find((row) =>
       row.textContent?.includes("Start of the year")

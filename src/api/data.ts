@@ -1,9 +1,5 @@
-// api/data.ts
-
-
 import { TableData } from "../type";
 
-// Fetch data from the server
 export const fetchData = (): Promise<TableData[]> => {
   return fetch("/api/data")
     .then((res) => res.json())
@@ -16,7 +12,6 @@ export const fetchData = (): Promise<TableData[]> => {
     });
 };
 
-// Create a new entry on the server
 export const createEntry = (entry: TableData): Promise<TableData> => {
   return fetch("/api/data", {
     method: "POST",
@@ -35,7 +30,6 @@ export const createEntry = (entry: TableData): Promise<TableData> => {
     });
 };
 
-// Delete an entry from the server
 export const deleteEntry = (id: string): Promise<void> => {
   return fetch(`/api/data/${id}`, {
     method: "DELETE",

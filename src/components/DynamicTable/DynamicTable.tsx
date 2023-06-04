@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Input } from "antd";
-import { getColumns, getRows } from "./tableUtils";
+import { getColumns, getRows } from "../../helpers/tableUtils";
 import { SchemaField, TableData } from "../../type";
 import { searchEntries } from "../../api/data";
-import "./DynamicTable.css"; // Import the CSS file for custom styles
+import "./DynamicTable.css";
 
 interface Props {
   schema: SchemaField[];

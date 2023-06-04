@@ -32,8 +32,6 @@ export const handleUpdate = (
     endDate: endDate ? endDate.format("YYYY-MM-DD") : undefined,
     ...restFormValues,
   };
-  console.log('entryId')
-  console.log(entryId)
 
   updateEntry(entryId, updatedEntry)
     .then((response: TableData) => {

@@ -36,8 +36,6 @@ const EntryForm: React.FC<Props> = ({
           const startDateInitialValue = getFieldInitialValue(field.name[0]);
           const endDateInitialValue = getFieldInitialValue(field.name[1]);
 
-          console.log(startDateInitialValue);
-
           return (
             <React.Fragment key={field.name[0]}>
               <Form.Item
