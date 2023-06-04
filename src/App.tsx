@@ -5,36 +5,10 @@ import DynamicTable from "./components/DynamicTable/DynamicTable";
 import EntryFormModal from "./components/DynamicTable/EntryFormModal";
 import { fetchData, searchEntries } from "./api/data";
 import { handleCreate, handleDelete, handleUpdate } from "./helpers/handlers";
-import { SchemaField, TableData } from "./type";
+import { TableData } from "./type";
 import "./App.css";
 
-const schema: SchemaField[] = [
-  {
-    name: "title",
-    component: "text",
-    label: "Title",
-    required: true,
-  },
-  {
-    name: "type",
-    component: "select",
-    label: "Type",
-    options: [
-      { label: "Generic", value: "generic" },
-      { label: "Holiday", value: "holiday" },
-    ],
-  },
-  {
-    name: ["startDate", "endDate"],
-    component: "range_picker",
-    label: "Date",
-  },
-  {
-    name: "description",
-    component: "textarea",
-    label: "Description",
-  },
-];
+import schema from "./schemas/schema";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -107,4 +81,5 @@ function App() {
     </>
   );
 }
+
 export default App;

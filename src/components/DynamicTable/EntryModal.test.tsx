@@ -1,6 +1,5 @@
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
-
 import App from "../../App";
 
 jest.mock("../../api/data", () => ({
@@ -19,13 +18,26 @@ jest.mock("../../api/data", () => ({
   createEntry: jest.fn((entry) =>
     Promise.resolve({
       id: "2",
-      title: entry.title,
-      type: entry.type,
-      startDate: entry.startDate,
-      endDate: entry.endDate,
-      description: entry.description,
+      ...entry,
     })
   ),
+}));
+
+jest.mock("../../schemas/schema", () => ({
+  __esModule: true,
+  default: [
+    {
+      name: "title",
+      component: "text",
+      label: "Title",
+      required: true,
+    },
+    {
+      name: "description",
+      component: "textarea",
+      label: "Description",
+    },
+  ],
 }));
 
 describe("App", () => {
@@ -50,7 +62,6 @@ describe("App", () => {
   });
 
   it("should fill in fields in the modal and show toast message on success", async () => {
-    // Open the modal
     const addButton = screen.getByText("Add Entry");
     fireEvent.click(addButton);
 

@@ -13,8 +13,6 @@ interface TableData {
     endDate?: any;
   } | string;
   [key: string]: any;
-  // title: String;
-  // description: String;
 }
 
 export interface FieldOption {
