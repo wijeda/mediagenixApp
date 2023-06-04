@@ -33,13 +33,19 @@ const EntryForm: React.FC<Props> = ({
     <Form form={form} layout="vertical" onFinish={onFinish}>
       {schema.map((field) => {
         if (field.component === "range_picker") {
-          const initialValue = getFieldInitialValue(field.name[0]);
+          const startDateInitialValue = getFieldInitialValue(field.name[0]);
+          const endDateInitialValue = getFieldInitialValue(field.name[1]);
+
+          console.log(startDateInitialValue);
+
           return (
             <React.Fragment key={field.name[0]}>
               <Form.Item
                 label={`Start Date`}
                 name={`${field.name[0]}`}
-                initialValue={initialValue && moment(initialValue)}
+                initialValue={
+                  startDateInitialValue && moment(startDateInitialValue)
+                }
                 rules={[
                   {
                     required: field.required,
@@ -53,8 +59,7 @@ const EntryForm: React.FC<Props> = ({
                 label={`End Date`}
                 name={`${field.name[1]}`}
                 initialValue={
-                  getFieldInitialValue(field.name[1]) &&
-                  moment(getFieldInitialValue(field.name[1]))
+                  endDateInitialValue && moment(endDateInitialValue)
                 }
                 rules={[
                   {
