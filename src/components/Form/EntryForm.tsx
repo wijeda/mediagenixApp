@@ -18,8 +18,11 @@ const EntryForm: React.FC<Props> = ({
   onCancel,
   onFinish,
 }) => {
-  const getFieldInitialValue = (fieldName: string) => {
+  const getFieldInitialValue = (fieldName: string | string[]) => {
     if (editEntry) {
+      if (Array.isArray(fieldName)) {
+        return fieldName.map((name) => editEntry[name]);
+      }
       return editEntry[fieldName];
     }
 
@@ -70,7 +73,7 @@ const EntryForm: React.FC<Props> = ({
 
         return (
           <Form.Item
-            key={field.name}
+            key={String(field.name)}
             label={field.label}
             name={field.name}
             initialValue={initialValue}
