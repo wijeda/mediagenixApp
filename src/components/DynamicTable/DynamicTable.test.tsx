@@ -4,7 +4,18 @@ import "@testing-library/jest-dom";
 import App from "../../App";
 
 jest.mock("../../api/data", () => ({
-  fetchData: jest.fn(() => Promise.resolve([{ id: 1, title: "Test Entry" }])),
+  fetchData: jest.fn(() =>
+    Promise.resolve([
+      {
+        id: "1",
+        title: "Start of the year",
+        type: "generic",
+        startDate: "2022-01-01",
+        endDate: "2022-12-01",
+        description: "This is an event about the start of this year",
+      },
+    ])
+  ),
 }));
 
 describe("App", () => {
@@ -30,15 +41,21 @@ describe("App", () => {
 
   it("should render the table with correct data on load", async () => {
     // Wait for data to be fetched and rendered
-    await screen.findByText("Test Entry");
+    await screen.findByText("Start of the year");
 
     // Assert that a table row contains the expected data
     const tableRows = screen.getAllByRole("row");
-    const rowWithTestEntry = tableRows.find((row) =>
-      row.textContent?.includes("Test Entry")
+    const rowWithTestData = tableRows.find((row) =>
+      row.textContent?.includes("Start of the year")
     );
-    console.log("rorowWithTestEntryw");
-    console.log(rowWithTestEntry);
-    expect(rowWithTestEntry).toBeInTheDocument();
+
+    expect(rowWithTestData).toBeInTheDocument();
+    expect(rowWithTestData).toHaveTextContent("Start of the year");
+    expect(rowWithTestData).toHaveTextContent("generic");
+    expect(rowWithTestData).toHaveTextContent("2022-01-01");
+    expect(rowWithTestData).toHaveTextContent("2022-12-01");
+    expect(rowWithTestData).toHaveTextContent(
+      "This is an event about the start of this year"
+    );
   });
 });

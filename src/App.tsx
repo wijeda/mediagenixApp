@@ -1,10 +1,12 @@
-import "./App.css";
-import DynamicTable from "./components/DynamicTable/DynamicTable";
-import { SchemaField, TableData } from "./type";
 import { useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import DynamicTable from "./components/DynamicTable/DynamicTable";
 import EntryFormModal from "./components/DynamicTable/EntryFormModal";
 import { fetchData, searchEntries } from "./api/data";
 import { handleCreate, handleDelete, handleUpdate } from "./helpers/handlers";
+import { SchemaField, TableData } from "./type";
+import "./App.css";
 
 const schema: SchemaField[] = [
   {
@@ -60,15 +62,16 @@ function App() {
   };
 
   const handleEditRequest = (formData: TableData) => {
-    console.log(formData);
     if (editEntry) {
       handleUpdate(editEntry.id, formData, tableData, setTableData);
       setIsModalOpen(false);
+      toast.success("Entry updated successfully!");
     }
   };
 
   const handleDeleteRow = (entryId: string) => {
     handleDelete(entryId, tableData, setTableData);
+    toast.success("Entry deleted successfully!");
   };
 
   const handleCreateRow = () => {
@@ -79,6 +82,7 @@ function App() {
   const handleCreateRequest = (formData: TableData) => {
     handleCreate(formData, tableData, setTableData);
     setIsModalOpen(false);
+    toast.success("Entry added successfully!");
   };
 
   return (
@@ -99,8 +103,8 @@ function App() {
           editEntry={editEntry}
         />
       )}
+      <ToastContainer />
     </>
   );
 }
-
 export default App;

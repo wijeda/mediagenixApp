@@ -37,20 +37,20 @@ const EntryForm: React.FC<Props> = ({
           return (
             <React.Fragment key={field.name[0]}>
               <Form.Item
-                label={`${field.label} (Start Date)`}
+                label={`Start Date`}
                 name={`${field.name[0]}`}
                 initialValue={initialValue && moment(initialValue)}
                 rules={[
                   {
                     required: field.required,
-                    message: `Please enter ${field.label} (Start Date)`,
+                    message: `Please enter Start Date`,
                   },
                 ]}
               >
                 <DatePicker format="YYYY-MM-DD" />
               </Form.Item>
               <Form.Item
-                label={`${field.label} (End Date)`}
+                label={`End Date`}
                 name={`${field.name[1]}`}
                 initialValue={
                   getFieldInitialValue(field.name[1]) &&
@@ -59,7 +59,7 @@ const EntryForm: React.FC<Props> = ({
                 rules={[
                   {
                     required: field.required,
-                    message: `Please enter ${field.label} (End Date)`,
+                    message: `Please enter End Date`,
                   },
                 ]}
               >

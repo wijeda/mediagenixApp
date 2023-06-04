@@ -14,7 +14,6 @@ export const handleCreate = (
     endDate: endDate ? endDate.format("YYYY-MM-DD") : undefined,
     ...restFormValues,
   };
-
   createEntry(newEntry).then((response: TableData) => {
     setTableData([...tableData, response]);
   });
